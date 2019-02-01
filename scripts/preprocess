@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SPPATH="/myewebssh/scripts"
+
+[[ $# -lt 1 ]] && echo -e "usage: please specify which user. ex:\n       ./preprocess.sh username" && exit 1 || echo "username: $1"
+
+# switch to user
+su $1 -c "bash $SPPATH/user_go" 
+

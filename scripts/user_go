@@ -1,0 +1,63 @@
+#!/bin/bash
+
+## this script assume to be executed under right user.
+
+FILEDIR=~/.ssh
+FILENAME=$FILEDIR/id_mye
+AUTHFILE=$FILEDIR/authorized_keys
+HOST=host
+USER=${USER}
+
+# please fillin parameter 1 the file name of authorized_file
+# parameter 2 the content of public key of RSA file
+key_existence(){
+    kexist=""
+    if [ -f "$1" ]; then
+        #echo "check in file $1"
+        #echo "public key content = $2"
+        while read line; do
+            # reading each line
+            #echo "Line No. $n : $line"
+            if [ "$line" == "$2" ]; then
+                kexist="True"
+                return 101
+            fi
+        done < $1
+    else
+        return -1
+    fi
+}
+
+if [ -f "$FILENAME" ]; then
+    echo "Using existing key"
+else
+    echo "Creating a new key using ssh-keygen"
+    # switch to user, so the key could generate under the user
+    echo -e "\n\n\n" | ssh-keygen -t rsa -f $FILENAME -N ""
+    echo "key gen done"
+fi
+
+# check the public key existence in authorized_keys
+key_existence $AUTHFILE "$(cat ${FILENAME}\.pub)"
+#echo "ret code = $?"
+#[[ $kexist == "True" ]] && echo "public key existed in $AUTHFILE"
+[[ $kexist != "True" ]] && cat "${FILENAME}.pub" >> $AUTHFILE
+#echo "check end, kexist = $kexist"
+
+
+# TODO: uncomment and modify, if we need to ssh to another node under cluster mode. One thing needs to be solve is that how we get user's password to be used in adding the public key to remote host by ssh-copy-id, which is not difficult but need to negotiate a way to do it.
+
+#echo "Copying the key to the remote machine $USER@$HOST, this should ask for the password"
+#sh-copy-id -i $FILENAME.pub $USER@$HOST
+#RET=$?
+#if [ $RET -ne 0 ];then
+#  echo Executing ssh-copy-id via $SSH_COPY_ID failed, trying to manually copy the key-file instead
+#  cat ${FILENAME}.pub | ssh $USER@$HOST 'cat >> ~/.ssh/authorized_keys'
+#fi
+#
+#RET=$?
+#if [ $RET -ne 0 ];then
+#    echo ssh-copy-id failed: $RET
+#    exit 1
+#fi
+
