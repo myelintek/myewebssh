@@ -23,6 +23,7 @@ function install(){
     pip install $CWD/webssh/dist/myewebssh*
 }
 
+[[ $# == 0 ]] && echo $USAGE
 
 while [[ $# > 0 ]]
 do
