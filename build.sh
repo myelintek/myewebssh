@@ -8,9 +8,9 @@ build(){
     git clone --branch=v0.9.0 https://github.com/myelintek/webssh.git
 
     # link myelintek src to webssh
-    ln -v ./src/myelintek.py ./webssh/webssh/myelintek.py
-    ln -v ./src/myeHandler.py ./webssh/webssh/myeHandler.py
-    ln -v ./src/myelintek_setup.py ./webssh/myelintek_setup.py
+    ln -vf ./src/myelintek.py ./webssh/webssh/myelintek.py
+    ln -vf ./src/myeHandler.py ./webssh/webssh/myeHandler.py
+    ln -vf ./src/myelintek_setup.py ./webssh/myelintek_setup.py
 
     cd webssh && python2.7 myelintek_setup.py bdist_wheel
     

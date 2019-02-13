@@ -47,9 +47,12 @@ class MyeHandler(IndexHandler):
     # scripts file path
     SPFILE="/myewebssh/scripts/preprocess"
 
+    def get(self):
+        self.post()
+
     def get_args(self):
         hostname = wsconfig_value('ssh_host')
-        port = wsconfig_value('ssh_port')
+        port = int(wsconfig_value('ssh_port'))
         if isinstance(self.policy, paramiko.RejectPolicy): self.lookup_hostname(hostname, port)
 
         username = self.get_value('username')
