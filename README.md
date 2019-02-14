@@ -53,6 +53,8 @@ add 2 scripts:  preprocess `user_go`
 
 #### useful commands
 
+- build and install myewebssh package
+    - `bash build.sh install`
 - launh myewebssh
 	- `wssh --port=4200 --fbidhttp=False --logging=debug`
 
