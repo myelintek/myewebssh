@@ -64,7 +64,8 @@ def get_value_decorator(config, conf_sess_name):
 
 # an example
 SENAME = "your session in config"
-@parser.get_value_decorator(myconfig, SENAME)
+myconfig = {}
+@get_value_decorator(myconfig, SENAME)
 def myconfig_value(keyword, def_value):
     try:
         return myconfig[SENAME][keyword]

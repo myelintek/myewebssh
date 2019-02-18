@@ -42,8 +42,8 @@ def wsconfig_value(keyword, defval=None):
         return defval
 
 def check_lockfile(username, sid):
-    lockfile_path = wsconfig_value("lockfile_path")
-    lockfile_prefix = wsconfig_value("lockfile")
+    lockfile_path = wsconfig_value("lockfile_path", '/tmp')
+    lockfile_prefix = wsconfig_value("lockfile", 'wslock_')
     lockfile = "{}/{}{}.lock".format(lockfile_path, lockfile_prefix, username)
     with open(lockfile, 'r') as lockfile:
         sid_infile = lockfile.read();
