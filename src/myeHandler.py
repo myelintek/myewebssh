@@ -1,7 +1,7 @@
 import os
 import sys
 
-BASE_DIR = '/build/myewebssh'
+BASE_DIR = '/myewebssh'
 
 try:
     myewebssh_conf = os.environ['MYEWEBSSH_CONFIG']
