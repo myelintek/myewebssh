@@ -24,6 +24,7 @@ build(){
 function install(){
     pip uninstall -y myewebssh 2>/dev/null
     pip install $CWD/webssh/dist/myewebssh*
+    [[ $? -eq 0 ]] && echo ".install success."
 }
 
 [[ $# == 0 ]] && echo $USAGE
@@ -36,15 +37,15 @@ do
 		install)
             build
 			install
-			shift
+			exit $?
 			;;
 		build)
             build
-			shift
+			exit $?
 			;;
 		-h|--help)
 			echo $USAGE
-			shift
+			exit $?
 			;;
 		*)
 			# unknown option
@@ -52,3 +53,4 @@ do
 			;;
 	esac
 done
+

@@ -1,8 +1,18 @@
 import os
 import sys
 
-myewebssh_conf = os.environ['MYEWEBSSH_CONFIG']
-myeconf_parser = os.environ['MYECONF_PARSER']
+BASE_DIR = '/build/myewebssh'
+
+try:
+    myewebssh_conf = os.environ['MYEWEBSSH_CONFIG']
+except KeyError as e:
+    # setup default values
+    myewebssh_conf = BASE_DIR + 'conf/myewebssh.conf'
+try:
+    myeconf_parser = os.environ['MYECONF_PARSER']
+except KeyError as e:
+    myeconf_parser = BASE_DIR + 'src/myeconf_parser.py'
+
 sys.path.insert(0, os.path.dirname(myeconf_parser))
 myeconf_parser_name = os.path.splitext(os.path.basename(myeconf_parser))[0]
 parser = __import__(myeconf_parser_name)
@@ -12,8 +22,11 @@ import codecs
 
 from webssh.handler import *
 
-# scripts file path
-SPFILE=os.environ['MYE_SCRIPTS_DIR']+"/preprocess"
+try:
+    # scripts file path
+    SPFILE=os.environ['MYE_SCRIPTS_DIR']+"/preprocess"
+except:
+    SPFILE = BASE_DIR + '/scripts/preprocess'
 
 # read config from file
 myeconfig = parser.get_config(myewebssh_conf)
@@ -21,11 +34,12 @@ myeconfig = parser.get_config(myewebssh_conf)
 WS_CONF_SESS_NAME="webssh"
 # get_value_decorator take arg1 to define the session
 @parser.get_value_decorator(myeconfig, WS_CONF_SESS_NAME)
-def wsconfig_value(keyword):
+def wsconfig_value(keyword, defval=None):
     try:
         return myeconfig[WS_CONF_SESS_NAME][keyword]
     except KeyError as e:
-        logger.warning('Key Error: %s', keyword)
+        logger.warning('Key Error: %s, using defval', keyword)
+        return defval
 
 def check_lockfile(username, sid):
     lockfile_path = wsconfig_value("lockfile_path")
@@ -54,8 +68,8 @@ class MyeHandler(IndexHandler):
         self.render('myeIndex.html', debug=self.debug)
 
     def get_args(self):
-        hostname = wsconfig_value('ssh_host')
-        port = int(wsconfig_value('ssh_port'))
+        hostname = wsconfig_value('ssh_host', 'localhost')
+        port = int(wsconfig_value('ssh_port', '22'))
         if isinstance(self.policy, paramiko.RejectPolicy):
             self.lookup_hostname(hostname, port)
 
@@ -81,7 +95,7 @@ class MyeHandler(IndexHandler):
         # exec preprocess script first
         global SPFILE
         subprocess.call([SPFILE, username])
-        key_fn = wsconfig_value('key_fn')
+        key_fn = wsconfig_value('key_fn', 'id_mye')
         kpath = "/home/{}/.ssh/{}".format(username, key_fn)
         self.privatekey_filename = kpath
 
