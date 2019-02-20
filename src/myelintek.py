@@ -41,6 +41,10 @@ def app_listen(app, port, address, server_settings):
 
 
 def main():
+    # get ws_port and insert to sys.argv[1] which could be overrided by
+    # following port number that user passed in
+    ws_port = wsconfig_value("ws_port", "4200")
+    sys.argv.insert(1, "--port={}".format(ws_port))
     options.parse_command_line()
     loop = tornado.ioloop.IOLoop.current()
     app = make_app(make_handlers(loop, options), get_app_settings(options))
