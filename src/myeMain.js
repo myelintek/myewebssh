@@ -39,7 +39,7 @@ jQuery(function($){
   var status = $('#status'),
       btn = $('.btn-primary'),
       style = {},
-      title_text = 'WebSSH',
+      title_text = 'Console',
       title_element = document.querySelector('title'),
       form_id = '#connect',
       debug = document.querySelector(form_id).noValidate,
@@ -386,7 +386,7 @@ jQuery(function($){
       //$('.container').show();
       status.text(e.reason);
       state = DISCONNECTED;
-      title_text = 'WebSSH';
+      title_text = 'Console';
       title_element.text = title_text;
       wsWindow.close();
     };
