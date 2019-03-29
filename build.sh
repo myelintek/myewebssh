@@ -4,9 +4,9 @@ USAGE='usaeg: ./build.sh build|install'
 CWD=$PWD
 
 build(){
-    # check out v0.9.0
+    # check out v1.0.3
     [[ ! -d webssh ]] && \
-    git clone --branch=v0.9.0 https://github.com/myelintek/webssh.git
+    git clone --branch=v1.0.3 https://github.com/myelintek/webssh.git
 
     # link myelintek src to webssh
     ln -vf ./src/myelintek.py ./webssh/webssh/myelintek.py
@@ -31,26 +31,26 @@ function install(){
 
 while [[ $# > 0 ]]
 do
-	key="$1"
-	shift
-	case $key in
-		install)
+    key="$1"
+    shift
+    case $key in
+        install)
             build
-			install
-			exit $?
-			;;
-		build)
+            install
+            exit $?
+            ;;
+        build)
             build
-			exit $?
-			;;
-		-h|--help)
-			echo $USAGE
-			exit $?
-			;;
-		*)
-			# unknown option
-			echo $USAGE ", unknown parameter: $key, "
-			;;
-	esac
+            exit $?
+            ;;
+        -h|--help)
+             echo $USAGE
+             exit $?
+             ;;
+        *)
+             # unknown option
+             echo $USAGE ", unknown parameter: $key, "
+             ;;
+   esac
 done
 

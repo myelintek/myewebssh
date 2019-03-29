@@ -120,9 +120,23 @@ jQuery(function($){
   }
 
 
-  function current_geometry() {
+  function get_cell_size(term) {
+    style.width = term._core.renderer.dimensions.actualCellWidth;
+    style.height = term._core.renderer.dimensions.actualCellHeight;
+  }
+
+  function toggle_fullscreen(term) {
+    var func = term.toggleFullScreen || term.toggleFullscreen;
+    func.call(term, true);
+  }
+
+  function current_geometry(term) {
     if (!style.width || !style.height) {
-      parse_xterm_style();
+      try {
+        get_cell_size(term);
+      } catch (TypeError) {
+        parse_xterm_style();
+      }
     }
 
     var cols = parseInt(window.innerWidth / style.width, 10) - 1;
@@ -235,7 +249,7 @@ jQuery(function($){
         sock = new window.WebSocket(url),
         encoding = 'utf-8',
         decoder = window.TextDecoder ? new window.TextDecoder(encoding) : encoding,
-        terminal = document.getElementById('#terminal'),
+        terminal = document.getElementById('terminal'),
         term = new window.Terminal({
           cursorBlink: true,
         });
@@ -249,7 +263,7 @@ jQuery(function($){
     }
 
     function resize_terminal(term) {
-      var geometry = current_geometry();
+      var geometry = current_geometry(term);
       term.on_resize(geometry.cols, geometry.rows);
     }
 
@@ -291,7 +305,7 @@ jQuery(function($){
 
     wssh.geometry = function() {
       // for console use
-      var geometry = current_geometry();
+      var geometry = current_geometry(term);
       console.log('Current window geometry: ' + JSON.stringify(geometry));
     };
 
@@ -335,7 +349,7 @@ jQuery(function($){
       var valid_args = false;
 
       if (cols > 0 && rows > 0)  {
-        var geometry = current_geometry();
+        var geometry = current_geometry(term);
         if (cols <= geometry.cols && rows <= geometry.rows) {
           valid_args = true;
         }
@@ -349,7 +363,7 @@ jQuery(function($){
     };
 
     term.on_resize = function(cols, rows) {
-      if (cols !== this.geometry[0] || rows !== this.geometry[1]) {
+      if (cols !== this.cols || rows !== this.rows) {
         console.log('Resizing terminal to geometry: ' + format_geometry(cols, rows));
         this.resize(cols, rows);
         sock.send(JSON.stringify({'resize': [cols, rows]}));
@@ -362,9 +376,9 @@ jQuery(function($){
     });
 
     sock.onopen = function() {
-      $('.container').hide();
-      term.open(terminal, true);
-      term.toggleFullscreen(true);
+      term.open(terminal);
+      toggle_fullscreen(term);
+      term.focus();
       state = CONNECTED;
       title_element.text = title_text;
     };
@@ -662,5 +676,9 @@ jQuery(function($){
   }
 
   window.addEventListener('message', cross_origin_connect, false);
+
+  if (window.Terminal.applyAddon) {
+    window.Terminal.applyAddon(window.fullscreen);
+  }
 
 });
