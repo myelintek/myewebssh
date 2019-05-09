@@ -300,7 +300,7 @@ jQuery(function($){
     }
 
     wssh.set_encoding = set_encoding;
-    set_encoding(msg.encoding);
+    set_encoding("utf-8");
 
 
     wssh.geometry = function() {
