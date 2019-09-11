@@ -50,18 +50,18 @@ def check_lockfile(username, sid):
 
     if sid != sid_infile:
         # logging in file, don't response sid_infile to client.
-	logging.error("sid not match! user = {}, sid = {}, sid_infile = {}".format(username, sid, sid_infile))
+        logging.error("sid not match! user = {}, sid = {}, sid_infile = {}".format(username, sid, sid_infile))
         raise InvalidValueError("sid not match! sid = {}".format(sid))
     else:
-	logging.debug("sid match, sid = {}, sid_infile = {}".format(sid, sid_infile))
-	return True
+        logging.debug("sid match, sid = {}, sid_infile = {}".format(sid, sid_infile))
+    return True
 
 
 class MyeHandler(IndexHandler):
 
     def get(self):
-	# check sid and username to prevent connect from login page.
-	username = self.get_value('username')
+        # check sid and username to prevent connect from login page.
+        username = self.get_value('username')
         sid = self.get_value('sid')
         check_lockfile(username, sid)
 
